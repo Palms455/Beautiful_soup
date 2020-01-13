@@ -14,7 +14,7 @@ class BaseModel(Model):
 
 class Seller(BaseModel):
 
-	seller = TextField()
+	seller = TextField(unique=True)
 
 class Product(BaseModel):
 	title = TextField()
@@ -22,7 +22,8 @@ class Product(BaseModel):
 	adress = TextField()
 	description = TextField()
 	category = CharField()
-	seller = ForeignKeyField(Seller, backref = 'product_owner')
+	seller = ForeignKeyField(Seller, to_field='seller', related_name = 'product_owner', on_delete='cascade',
+                               on_update='cascade')
 	item_id = CharField()
 
 

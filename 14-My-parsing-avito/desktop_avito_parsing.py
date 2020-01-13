@@ -65,7 +65,7 @@ class Article():
 		except:
 			image = ''
 
-		self.data = {'adress': str(adress), 'price': str(price), 'title': str(title), 'category': str(category), 'description': str(description), 'item_id': str(item_id), 'image': image, 'seller': str(seller)}
+		self.data = {'adress': str(adress), 'price': str(price), 'title': str(title), 'category': str(category), 'description': str(description), 'item_id': str(item_id), 'image': image, 'seller': seller}
 		return self.data
 
 
@@ -78,14 +78,19 @@ def main():
 	
 	db.connect()
 	db.create_tables([Product, ProductFoto, Seller ])
-	#Seller.create(seller = p.data['seller'])
-	#sProduct.create(title=p.data['title'], price=p.data['price'], adress= p.data['adress'], description=p.data['description'], category = p.data['category'], seller=p.data['seller'], item_id=p.data['item_id'])
+	try:
+		Seller.select().where(Seller.seller == p.data['seller'])
+	except DoesNotExist:
+		Seller.create(seller = p.data['seller'])
+	Product.create(title=p.data['title'], price=p.data['price'], adress= p.data['adress'], description=p.data['description'], category = p.data['category'], seller=p.data['seller'], item_id=p.data['item_id'])
 	for imagin in (p.data['image']):
 		file=open(f'{i}.jpg', 'wb')
 		file.write(imagin)
 		file.close()
 		i +=1
-		ProductFoto.create(image = b'454', item_id = '556')
+		ProductFoto.create(image = imagin, item_id = p.data['item_id'])
+	for item in Product.select():
+		print(item.seller.seller,'\n', item.title, item.price, item.description)
 
 if __name__ == '__main__':
 	main()
