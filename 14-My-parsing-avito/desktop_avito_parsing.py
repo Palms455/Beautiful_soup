@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from write_to_SQL import *
+
 
 '''
 Парсинг десктопной версии 
@@ -79,9 +79,10 @@ def main():
 	db.connect()
 	db.create_tables([Product, ProductFoto, Seller ])
 	try:
-		Seller.select().where(Seller.seller == p.data['seller'])
+		owner = Seller.get(seller = p.data['seller'])
 	except DoesNotExist:
 		Seller.create(seller = p.data['seller'])
+
 	Product.create(title=p.data['title'], price=p.data['price'], adress= p.data['adress'], description=p.data['description'], category = p.data['category'], seller=p.data['seller'], item_id=p.data['item_id'])
 	for imagin in (p.data['image']):
 		file=open(f'{i}.jpg', 'wb')

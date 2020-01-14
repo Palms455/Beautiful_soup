@@ -5,7 +5,7 @@ from random import randint
 import time
 
 
-db = PostgresqlDatabase(database='avito', user='postgres', password='1514150', host='localhost')
+db = PostgresqlDatabase(database='avito', user='postgres', password='1514150Ee', host='localhost')
 
 
 class BaseModel(Model):
@@ -24,12 +24,12 @@ class Product(BaseModel):
 	category = CharField()
 	seller = ForeignKeyField(Seller, to_field='seller', related_name = 'product_owner', on_delete='cascade',
                                on_update='cascade')
-	item_id = CharField()
+	item_id = CharField(unique=True)
 
 
 
 class ProductFoto(BaseModel):
-	item_id = TextField()
+	item_id = ForeignKeyField(Product, to_field= 'item_id', related_name='phoro_item', on_delete='cascade')
 	image = BlobField()
 
 
@@ -46,16 +46,21 @@ def main():
 		time.sleep(randint(1,5))
 		site_list = get_site_list(get_html(urls))
 
-
 	for site in  site_list:
 		print(site)
 		p = Article(site)
-		Seller.create(seller = p.data['seller'])
-		Product.create(**p.data)
-		for foto in p.data['image']:
-			ProductFoto.create(image=foto, item_id = p.data['item_id'])
+		try:
+			owner = Seller.get(seller = p.data['seller'])
+		except DoesNotExist:
+			Seller.create(seller = p.data['seller'])
 
-
+		Product.create(title=p.data['title'], price=p.data['price'], adress= p.data['adress'], description=p.data['description'], category = p.data['category'], seller=p.data['seller'], item_id=p.data['item_id'])
+		for imagin in (p.data['image']):
+			#file=open(f'{i}.jpg', 'wb')
+			#file.write(imagin)
+			#file.close()
+			#i +=1
+			ProductFoto.create(image = imagin, item_id = p.data['item_id'])
 
 
 

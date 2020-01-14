@@ -4,9 +4,16 @@ from peewee import *
 '''
 Для работы с СУБД можно использовать ORM peewee
 pip install peewee psycopg2 psycopg2-binary
+sudo apt-get install postgresql pgadmin3
+
+sudo -u postgres psql :enter to bd
+\password :new pass
+CREATE DATABASE test; : new database
+
+
 
 '''
-db = PostgresqlDatabase(database='test', user='postgres', password='1514150', host='localhost')
+db = PostgresqlDatabase(database='test', user='postgres', password='1514150Ee', host='localhost')
 class Coinses(Model):
 	name = CharField(max_length=60)
 	url = TextField()
