@@ -1,6 +1,7 @@
 from selenium import webdriver
 import time
 from bs4 import BeautifulSoup
+import requests
 import csv
 
 class Bot:
@@ -21,7 +22,10 @@ class Bot:
 	def navigate(self):
 		self.driver.get(self.url)
 		self.driver.find_element_by_css_selector('.alert-first-usage__content a').click()
-		print(self.driver.get_cookies())
+		cook = self.driver.get_cookies()
+		c = {c['name']: c['value'] for c in cook}
+		
+
 		next_page = self.driver.find_element_by_css_selector('div.dataTables_paginate.paging_bootstrap.pagination ul :nth-child(5)')
 		while True:
 			self.driver.implicitly_wait(0.2)
@@ -32,6 +36,9 @@ class Bot:
 				next_page.find_element_by_tag_name('a').click()
 			else:
 				break
+		url = 'https://cenyvaptekah.ru/city/ufa/pharm/basket/index_data'
+		response = requests.get(url, params={'mode': 'full'}, cookies=c)
+		print(response.json())
 		self.in_basket()
 		
 
